@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Reflection.Metadata.Ecma335;
-using System.Security.AccessControl;
 
 namespace adventofcode2022._2022
 {
@@ -73,7 +72,6 @@ namespace adventofcode2022._2022
         {
             for (int i = 0; i < left.Length; i++)
             {
-                //
                 if (i >= right.Length)
                 {
                     return 1;
@@ -94,33 +92,22 @@ namespace adventofcode2022._2022
                         continue;
                     }
                 }
-                else if (left[i] is JArray && right[i] is JArray)
+                else
                 {
-                    var result = CompareArrays(left[i].ToString().Replace("\r\n", "").Trim(), right[i].ToString().Replace("\r\n", "").Trim());
-                    if (result == 0)
+                    var result = 0;
+                    if (left[i] is JArray && right[i] is JArray)
                     {
-                        continue;
+                        result = CompareArrays(left[i].ToString().Replace("\r\n", "").Trim(), right[i].ToString().Replace("\r\n", "").Trim());
                     }
-                    else
+                    else if (left[i] is JArray && right[i] is long)
                     {
-                        return result;
+                        result = CompareArrays(left[i].ToString().Replace("\r\n", "").Trim(), $"[{right[i]}]");
                     }
-                }
-                else if (left[i] is JArray && right[i] is long)
-                {
-                    var result = CompareArrays(left[i].ToString().Replace("\r\n", "").Trim(), $"[{right[i]}]");
-                    if (result == 0)
+                    else if (left[i] is long && right[i] is JArray)
                     {
-                        continue;
+                        result = CompareArrays($"[{left[i]}]", right[i].ToString().Replace("\r\n", "").Trim());
                     }
-                    else
-                    {
-                        return result;
-                    }
-                }
-                else if (left[i] is long && right[i] is JArray)
-                {
-                    var result = CompareArrays($"[{left[i]}]", right[i].ToString().Replace("\r\n", "").Trim());
+
                     if (result == 0)
                     {
                         continue;
@@ -132,7 +119,6 @@ namespace adventofcode2022._2022
                 }
             }
 
-            //4444444
             if (right.Length > left.Length)
             {
                 return -1;
