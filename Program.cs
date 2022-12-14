@@ -4,9 +4,9 @@ namespace adventofcode2022
 {
     internal class Program
     {
-        static void Main(string[] _)
+        static async Task Main(string[] _)
         {
-            _14.Run();
+            await _14.Run();
         }
     }
 }
