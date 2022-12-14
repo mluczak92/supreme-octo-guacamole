@@ -6,6 +6,11 @@ namespace adventofcode2022
     {
         static async Task Main(string[] _)
         {
+            await _12.Run();
+
+            await Task.Delay(3000);
+            Console.Clear();
+
             await _14.Run();
         }
     }

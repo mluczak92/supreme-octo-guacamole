@@ -12,7 +12,7 @@ namespace adventofcode2022._2022
         static string start = "+";
         static string rock = "█";
         static string empty = " ";
-        static string sand = "~";
+        static string sand = "█";
 
         public async static Task Run()
         {
@@ -88,6 +88,9 @@ namespace adventofcode2022._2022
                 array[array.Length - 1][i] = rock;
             }
 
+            await CounterDown();
+
+            Console.ForegroundColor = ConsoleColor.Red;
             for (int i = 0; i < array.Length; i++)
             {
                 for (int j = 0; j < array[0].Length; j++)
@@ -98,6 +101,7 @@ namespace adventofcode2022._2022
                 Console.WriteLine();
             }
 
+            Console.ForegroundColor = ConsoleColor.Yellow;
             int counter = 0;
             try
             {
@@ -143,9 +147,22 @@ namespace adventofcode2022._2022
             }
             catch (IndexOutOfRangeException)
             {
+                Console.ResetColor();
                 Console.SetCursorPosition(0, array.Length + 2);
                 Console.WriteLine(counter);
             }
+        }
+
+        static async Task CounterDown()
+        {
+            for (int i = 3; i >= 0; i--)
+            {
+                Console.Clear();
+                Console.Write(i);
+                await Task.Delay(1000);
+            }
+
+            Console.Clear();
         }
     }
 }
