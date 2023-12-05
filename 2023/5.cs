@@ -217,14 +217,25 @@ humidity-to-location map:
         };
 
         long lowest = long.MaxValue;
-        foreach (var seed in parsed.Seeds)
+
+        var pairs = parsed.Seeds
+            .Select((value, index) => new { value, index })
+            .GroupBy(x => x.index / 2, x => x.value);
+        
+        foreach (var range in pairs)
         {
-            Console.WriteLine($"seed: {seed}");
-            var output = NextLayer(seed, 0, parsed.Layers);
-            if (output < lowest) lowest = output;
+            for (long seed = range.ElementAt(0); seed < range.ElementAt(0) + range.ElementAt(1); seed++)
+            {
+                Console.WriteLine($"seed: {seed}");
+                var output = NextLayer(seed, 0, parsed.Layers);
+                if (output < lowest) lowest = output;
+                
+                Console.WriteLine();
+                Console.WriteLine();
+            }
         }
         
-        Console.WriteLine(lowest);
+        Console.WriteLine($"RESULT: {lowest}");
     }
 
     static List<(long SourceRangeStart, long DestRangeStart, long Len)> ParseRanges(string[] splitInput, int idx)
@@ -251,12 +262,12 @@ humidity-to-location map:
             if (input >= range.SourceRangeStart && input < sourceRangeEnd)
             {
                 var rangeOffset = range.DestRangeStart - range.SourceRangeStart;
-                Console.WriteLine($"layer: {idx}, input {input + rangeOffset}");
+                Console.Write($"layer: {idx}, input {input + rangeOffset}\t");
                 return NextLayer(input + rangeOffset, ++idx, layers);
             }
         }
 
-        Console.WriteLine($"layer: {idx}, input {input}");
+        Console.Write($"layer: {idx}, input {input}\t");
         return NextLayer(input, ++idx, layers);
     }
 }
