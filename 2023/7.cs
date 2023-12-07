@@ -1024,7 +1024,7 @@ AJ239 835
             { '8', 8 },
             { '9', 9 },
             { 'T', 10 },
-            { 'J', 11 },
+            { 'J', 1 },
             { 'Q', 12 },
             { 'K', 13 },
             { 'A', 14 }
@@ -1042,7 +1042,7 @@ AJ239 835
                     Bid = int.Parse(split[1])
                 };
             })
-            .OrderBy(x => Sort1(dic, x.Sorted))
+            .OrderBy(x => Sort(dic, x.Sorted))
             .ThenBy(x => dic[x.OriginalOrder[0]])
             .ThenBy(x => dic[x.OriginalOrder[1]])
             .ThenBy(x => dic[x.OriginalOrder[2]])
@@ -1050,69 +1050,118 @@ AJ239 835
             .ThenBy(x => dic[x.OriginalOrder[4]])
             .ToList();
 
-        foreach (var car in ordered)
-        {
-            Console.WriteLine(car);
-        }
+        // foreach (var car in ordered)
+        // {
+        //     Console.WriteLine(car);
+        // }
+        
+        // 253491089 too high
+        // 253362743
         
         Console.WriteLine(ordered.Sum(x => ++i * x.Bid));
-        
-        // 253546679 too high
-        // 253403594 too high
-        
-        // 253313241
-        
-        // 253286982 too LOW
     }
 
-    public static int Sort1(Dictionary<char, int> dic, string sorted)
+    public static int Sort(Dictionary<char, int> dic, string sorted)
     {
+        var jokersCount = sorted.Count(x => x == 'J');
+        if (jokersCount > 0)
+        {
+            if (jokersCount == 5 || jokersCount == 4)
+            {
+                // Console.WriteLine($"{sorted} 5 !!!");
+                return 7; // 5 !!!
+            }
+        
+            if (jokersCount == 3)
+            {
+                var rest = sorted.Where(x => x != 'J').Distinct().Count();
+                if (rest == 1)
+                {
+                    // Console.WriteLine($"{sorted} 5 !!!");
+                    return 7; // 5 !!!
+                }
+                
+                // Console.WriteLine($"{sorted} 4 !");
+                return 6; // 4 !
+            }
+        
+            var notJokers = dic.Where(x => x.Key != 'J').Select(x => x.Key).ToArray();
+            if (jokersCount == 1)
+            {
+                var bestSetup = "";
+                var bestRank = 0;
+                foreach (var card in notJokers)
+                {
+                    var replaced = new string(sorted.Replace('J', card).OrderBy(y => dic[y]).ToArray());
+                    var rank = Sort(dic, replaced);
+                    if (rank > bestRank)
+                    {
+                        bestSetup = replaced;
+                        bestRank = rank;
+                    }
+                }
+        
+                Console.WriteLine($"{sorted} -> {bestSetup}: {bestRank}");
+                return bestRank;
+            }
+        
+            if (jokersCount == 2)
+            {
+                var bestRank = 0;
+                var firstIdx = sorted.IndexOf('J');
+                var lastIdx = sorted.LastIndexOf('J');
+                foreach (var card1 in notJokers)
+                {
+                    foreach (var card2 in notJokers)
+                    {
+                        var replaced = sorted.Remove(firstIdx, 1).Insert(firstIdx, card1.ToString());
+                        replaced = new string(replaced.Remove(lastIdx, 1).Insert(lastIdx, card2.ToString()).OrderBy(y => dic[y]).ToArray());
+                        
+                        var rank = Sort(dic, replaced);
+                        if (rank > bestRank)
+                        {
+                            bestRank = rank;
+                        }
+                    }
+                }
+        
+                return bestRank;
+            }
+        }
+        
         if (Regex.IsMatch(sorted, @"(.)\1{4}"))
         {
-            // Console.WriteLine($"{sorted}, 5 !!!");
-            return 8;
+            return 7;
         }
 
         if (Regex.IsMatch(sorted,@"(.)\1{3}$") ||
             Regex.IsMatch(sorted,@"^(.)\1{3}"))
         {
-            // Console.WriteLine($"{sorted}, 4 !");
-            return 7;
+            return 6;
         }
 
         if (Regex.IsMatch(sorted, @"(.)\1{2}(.)\2{1}") ||
             Regex.IsMatch(sorted, @"(.)\1{1}(.)\2{2}"))
         {
-            // Console.WriteLine($"{sorted}, FULL");
-            return 6;
+            return 5;
         }
 
         if (Regex.IsMatch(sorted, @"(.)\1{2}"))
         {
-            // Console.WriteLine($"{sorted}, 3");
-            return 5;
+            return 4;
         }
 
         if (Regex.IsMatch(sorted, @"(.)\1{1}(.)\2{1}") ||
             Regex.IsMatch(sorted, @"(.)\1{1}.(.)\2{1}"))
         {
-            // Console.WriteLine($"{sorted}, 2 x 2");
-            return 4;
+            return 3;
         }
 
         if (Regex.IsMatch(sorted, @"(.)\1{1}"))
         {
-            // Console.WriteLine($"{sorted}, 2");
-            return 3;
+            return 2;
         }
         
-        // if (sorted.Distinct().Count() == 5)
-        // {
-        //     // Console.WriteLine($"{original}, ORDER");
-        //     return 2;
-        // }
-
-        // Console.WriteLine($"{sorted}, NULL");
         return 1;
     }
 }
