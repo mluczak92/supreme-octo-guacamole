@@ -27,7 +27,7 @@ public class _9
                 
                 if (newRow.All(x => x == 0))
                 {
-                    newRow.Add(0);
+                    newRow.Insert(0, 0);
                     break;
                 }
             }
@@ -35,13 +35,13 @@ public class _9
             // start extrapolating
             for (int i = graph.Count - 2; i >= 0; i--)
             {
-                var currentLast = graph[i].Last();
-                var previousLast = graph[i + 1].Last();
-                graph[i].Add(currentLast + previousLast);
+                var currentFirst = graph[i].First();
+                var previousFirst = graph[i + 1].First();
+                graph[i].Insert(0, currentFirst - previousFirst);
             }
         }
         
-        Console.WriteLine(input.Aggregate(0, (a, b) => a + b.Last()));
+        Console.WriteLine(input.Aggregate(0, (a, b) => a + b.First()));
     }
     
 //     private static string args = @"0 3 6 9 12 15
