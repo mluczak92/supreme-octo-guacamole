@@ -4,21 +4,21 @@ namespace adventofcode2022
 {
     internal class Program
     {
-        //static async Task Main(string[] _)
-        //{
-        //    await _12.Run();
-
-        //    await Task.Delay(3000);
-        //    Console.Clear();
-
-        //    await _14.Run();
-        //}
+        // static async Task Main(string[] _)
+        // {
+        //     await _12.Run();
+        //
+        //     await Task.Delay(3000);
+        //     Console.Clear();
+        //
+        //     await _14.Run();
+        // }
 
         static void Main(string[] _)
         {
             // _21.Run();
             
-            _7.Run();
+            _8.Run();
         }
     }
 }
