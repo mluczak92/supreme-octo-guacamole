@@ -14,8 +14,8 @@ public class _10
     
     public static void Run()
     {
-        Console.BufferHeight = 300;
-        Thread t = new Thread(new ThreadStart(Logic), 10000000);
+        // Console.BufferHeight = 300;
+        Thread t = new Thread(Logic, 10000000);
         t.Start();
     }
 
@@ -37,17 +37,105 @@ public class _10
         
         if (LookAround('S', startY, startX, history, ref counter))
         {
+            var insideC = 0;
+            for (int i = 0; i < array.Count; i++)
+            {
+                for (int j = 0; j < array[0].Length; j++)
+                {
+                    if (!history.Contains((i, j)))
+                    {
+                        var sameRow = history.Where(x => x.Item1 == i).ToArray();
+                        if (sameRow.Any())
+                        {
+                            var greaterColumn = sameRow.Where(x => x.Item2 > j).OrderBy(x => x.Item2).ToArray();
+                            
+                            var straightWallCounter = 0;
+                            char? lastHalfWall = null;
+                            foreach (var wall in greaterColumn)
+                            {
+                                var current = array[wall.Item1][wall.Item2];
+                                if (current == '-') continue;
+                                if (current == 'S') current = startPipe;
+                                
+                                if (current == '|')
+                                {
+                                    straightWallCounter++;
+                                }
+                                
+                                else if (current == 'L')
+                                {
+                                    if (lastHalfWall == null)
+                                    {
+                                        lastHalfWall = current;
+                                    }
+                                }
+                                
+                                else if (current == 'F')
+                                {
+                                    if (lastHalfWall == null)
+                                    {
+                                        lastHalfWall = current;
+                                    }
+                                }
+                                
+                                else if (current == '7')
+                                {
+                                    if (lastHalfWall == 'L')
+                                    {
+                                        lastHalfWall = null;
+                                        straightWallCounter++;
+                                    }
+                                    else if (lastHalfWall == 'F')
+                                    {
+                                        lastHalfWall = null;
+                                    }
+                                }
+                                
+                                else if (current == 'J')
+                                {
+                                    if (lastHalfWall == 'F')
+                                    {
+                                        lastHalfWall = null;
+                                        straightWallCounter++;
+                                    }
+                                    else if (lastHalfWall == 'L')
+                                    {
+                                        lastHalfWall = null;
+                                    }
+                                }
+                            }
+                            
+                            var outside = straightWallCounter % 2 == 0;
+                            if (!outside)
+                            {
+                                insideC++;
+                            }
+                            
+                            var c = outside ? "OUT" : "IN";
+                            // Console.WriteLine($"y:{i}, x:{j} {c}");
+                        }
+                        else
+                        {
+                            // Console.WriteLine($"y:{i}, x:{j} OUT");
+                        }
+                    }
+                }
+            }
+            
+            Console.WriteLine(insideC);
+            
             // var idx = 0;
             // foreach (var entry in history)
             // {
             //     Console.WriteLine($"{idx++}. y:{entry.Item1}, x:{entry.Item2}, {array[entry.Item1][entry.Item2]}");
             // }
             
-            var midIdx = (int)Math.Ceiling((double)history.Count / 2);
-            var midElem = history.ElementAt(midIdx);
+            // var midIdx = (int)Math.Ceiling((double)history.Count / 2);
+            // var midElem = history.ElementAt(midIdx);
             
-            Console.WriteLine();
-            Console.WriteLine($"{midIdx}. y:{midElem.Item1}, x:{midElem.Item2}, {array[midElem.Item1][midElem.Item2]}");
+            // Console.SetCursorPosition(0, 99);
+            // Console.WriteLine();
+            // Console.WriteLine($"{midIdx}. y:{midElem.Item1}, x:{midElem.Item2}, {array[midElem.Item1][midElem.Item2]}");
 
             // int c = 1;
             // PrintHistoryEntry(history, history.Last(), ref c);
@@ -197,12 +285,36 @@ public class _10
         history.Add((y, x));
         // Console.WriteLine($"visited: y:{y}, x:{x}, {array[y][x]}");
         
+        // Thread.Sleep(1);
+        
         // Console.SetCursorPosition(x + 1, y + 1);
         // Console.Write(array[y][x]);
         
         return LookAround(current, y, x, history, ref counter);
     }
-    
+
+//     public static string args = @"FF7FSF7F7F7F7F7F---7
+// L|LJ||||||||||||F--J
+// FL-7LJLJ||||||LJL-77
+// F--JF--7||LJLJ7F7FJ-
+// L---JF-JLJ.||-FJLJJ7
+// |F|F-JF---7F7-L7L|7|
+// |FFJF7L7F-JF7|JL---7
+// 7-L-JL7||F7|L7F-7F7|
+// L.L7LFJ|||||FJL7||LJ
+// L7JLJL-JLJLJL--JLJ.L";
+
+//     public static string args = @".F----7F7F7F7F-7....
+// .|F--7||||||||FJ....
+// .||.FJ||||||||L7....
+// FJL7L7LJLJ||LJ.L-7..
+// L--J.L7...LJS7F-7L7.
+// ....F-J..F7FJ|L7L7L7
+// ....L7.F7||L7|.L7L7|
+// .....|FJLJ|FJ|F7|.LJ
+// ....FJL-7.||.||||...
+// ....L---J.LJ.LJLJ...";
+
 //     public static string args = @".....
 // .S-7.
 // .|.|.
