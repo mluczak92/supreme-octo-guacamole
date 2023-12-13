@@ -22,9 +22,9 @@ public class _12 {
         ulong sum = 0UL;
         foreach (var entry in input)
         {
-            // Console.WriteLine(c++);
             var cache = new Dictionary<(string, string), ulong>();
             sum += Replace(entry.Row, entry.BrokenList, -1, cache);
+            Console.WriteLine($"{++c}. {cache.Count}");
         }
         
         Console.WriteLine($"RESULT: {sum}");
