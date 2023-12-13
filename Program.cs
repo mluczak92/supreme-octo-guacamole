@@ -18,7 +18,7 @@ namespace adventofcode2022
         {
             // _21.Run();
             
-            _12.Run();
+            _13.Run();
         }
     }
 }
