@@ -5,7 +5,7 @@ namespace adventofcode2022._2023;
 public class _12 {
     public static void Run()
     {
-        var input = File.ReadAllLines("example.txt")
+        var input = File.ReadAllLines("input.txt")
             .Select(x => new
             {
                 Row = string.Join("u", new string(x.Split(" ")[0].ToArray()))
@@ -19,13 +19,15 @@ public class _12 {
             }).ToArray();
 
         var c = 0;
+        var sum = 0;
         foreach (var entry in input)
         {
             // Console.WriteLine(c++);
-            Replace(entry.Row, entry.BrokenList, -1);
+            var cache = new Dictionary<(string, string), int>();
+            sum += Replace(entry.Row, entry.BrokenList, -1, cache);
         }
         
-        Console.WriteLine($"RESULT: {results.Sum()}");
+        Console.WriteLine($"RESULT: {sum}");
         Console.ReadKey();
         
         // 10154 - too high
@@ -33,7 +35,7 @@ public class _12 {
 
     private static List<int> results = new();
 
-    static int Replace(string row, List<int> brokenList, int previousGroupIdx)
+    static int Replace(string row, List<int> brokenList, int previousGroupIdx, Dictionary<(string, string), int> cache)
     {
         var number = brokenList.First();
         var pattern = $"(?=([d*u*d*u*]{{{number}}}[uo]))";
@@ -63,22 +65,23 @@ public class _12 {
                 validGroupsCounter++;
             }
 
-            Console.WriteLine($"{row}: {validGroupsCounter}");
+            // Console.WriteLine($"{row}: {validGroupsCounter}");
             return validGroupsCounter;
         }
-        
+
+        int ways = 0;
         for (int i = 0; i < groups.Length; i++)
         {
             var group = groups.ElementAt(i);
             if (group.Index - 1 >= 0 && row[group.Index - 1] == 'd')
             {
-                return 0;
+                return ways;
             }
             
             var newStart = group.Index + group.Length;
             if (newStart >= row.Length)
             {
-                return 0;
+                return ways;
             }
 
             var newRow = row.Remove(group.Index, group.Length);
@@ -86,23 +89,18 @@ public class _12 {
 
             if (newRow.IndexOf("d") > -1 && newRow.IndexOf("d") < group.Index)
             {
-                return 0;
+                return ways;
             }
                 
             var count = newRow.Count(x => x == 'u' || x == 'd');
             if (count < newList.Sum(x => x))
             {
-                return 0;
+                return ways;
             }
             
-            var result = Replace(newRow, newList, group.Index);
-            if (result > 0)
-            {
-                results.Add(result);
-                // Console.WriteLine(result);
-            }
+            ways += Replace(newRow, newList, group.Index, cache);
         }
 
-        return 0;
+        return ways;
     }
 }
