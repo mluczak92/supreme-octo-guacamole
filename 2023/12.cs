@@ -8,11 +8,11 @@ public class _12 {
         var input = File.ReadAllLines("example.txt")
             .Select(x => new
             {
-                Row = string.Join("u", Enumerable.Range(0, 5).Select(_ => new string(x.Split(" ")[0].ToArray())))
+                Row = string.Join("u", new string(x.Split(" ")[0].ToArray()))
                     .Replace("#", "d")
                     .Replace(".", "o")
                     .Replace("?", "u"),
-                BrokenList = string.Join(",", Enumerable.Range(0, 5).Select(_ => x.Split(" ")[1]))
+                BrokenList = string.Join(",", x.Split(" ")[1])
                     .Split(",")
                     .Select(y => int.Parse(y))
                     .ToList()
@@ -21,7 +21,7 @@ public class _12 {
         var c = 0;
         foreach (var entry in input)
         {
-            Console.WriteLine(c++);
+            // Console.WriteLine(c++);
             Replace(entry.Row, entry.BrokenList, -1);
         }
         
@@ -45,7 +45,7 @@ public class _12 {
 
         var matches = Regex.Matches(row, pattern);
         var groups = matches.Select(x => x.Groups.Values.Skip(1).First()).Where(x => x.Index > previousGroupIdx).ToArray();
-        // Console.WriteLine($"trying to match: {new string(Enumerable.Range(0, number).Select(_ => 'd').ToArray())} in: {row}, matches: {groups.Length}");
+        Console.WriteLine($"trying to match: {new string(Enumerable.Range(0, number).Select(_ => 'd').ToArray())} in: {row}, matches: {groups.Length}");
         
         var newList = new List<int>(brokenList.Skip(1));
         if (newList.Count == 0)
@@ -60,11 +60,10 @@ public class _12 {
                     continue;
                 }
                 
-                
                 validGroupsCounter++;
             }
 
-            // Console.WriteLine($"{row}: {validGroupsCounter}");
+            Console.WriteLine($"{row}: {validGroupsCounter}");
             return validGroupsCounter;
         }
         
