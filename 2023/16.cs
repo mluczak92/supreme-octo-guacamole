@@ -9,14 +9,63 @@ public class _16
     public static void Run()
     {
         input = File.ReadAllLines("input.txt");
-        
-        var nextPositions = NextPositions((0, 0), "r");
-        foreach (var pos in nextPositions)
-        {
-            Visit((0, 0), pos.dir, (pos.row, pos.col));
-        }
+        var columns = input[0].Length;
 
-        Console.WriteLine(visited.Count);
+        var results = new List<int>();
+
+        for (int i = 0; i < input.Length; i++)
+        {
+            visited.Clear();
+            history.Clear();
+            var nextPositions = NextPositions((i, 0), "r");
+            foreach (var pos in nextPositions)
+            {
+                Visit((0, 0), pos.dir, (pos.row, pos.col));
+            }
+            
+            results.Add(visited.Count);
+        }
+        
+        for (int i = 0; i < input.Length; i++)
+        {
+            visited.Clear();
+            history.Clear();
+            var nextPositions = NextPositions((i, columns - 1), "l");
+            foreach (var pos in nextPositions)
+            {
+                Visit((0, 0), pos.dir, (pos.row, pos.col));
+            }
+            
+            results.Add(visited.Count);
+        }
+        
+        for (int i = 0; i < columns; i++)
+        {
+            visited.Clear();
+            history.Clear();
+            var nextPositions = NextPositions((0, i), "d");
+            foreach (var pos in nextPositions)
+            {
+                Visit((0, 0), pos.dir, (pos.row, pos.col));
+            }
+            
+            results.Add(visited.Count);
+        }
+        
+        for (int i = 0; i < columns; i++)
+        {
+            visited.Clear();
+            history.Clear();
+            var nextPositions = NextPositions((input.Length - 1, i), "u");
+            foreach (var pos in nextPositions)
+            {
+                Visit((0, 0), pos.dir, (pos.row, pos.col));
+            }
+            
+            results.Add(visited.Count);
+        }
+        
+        Console.WriteLine(results.Max());
     }
 
     static IEnumerable<(int row, int col, string dir)> NextPositions((int row, int col) curr, string direction)
