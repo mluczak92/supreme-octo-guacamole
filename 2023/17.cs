@@ -16,27 +16,33 @@ public class _17 {
 
     public static void Run()
     {
+        // 948 - too high
+        // 944 - too high
+        
         _map = File.ReadAllLines("input.txt");
         
         //https://www.geeksforgeeks.org/a-search-algorithm/
         var openPq = new PriorityQueue<Node, int>();
-        var openHs = new HashSet<Node>();
-        var closedHs = new HashSet<(int r, int c, int f)>();
+        var openDic = new Dictionary<(int r, int c, int pR, int pC, int gpR, int gpC, int ggpR, int ggpC), int>();
+        var closedDic = new Dictionary<(int r, int c, int pR, int pC, int gpR, int gpC, int ggpR, int ggpC), int>();
 
         var firstNode = new Node(0, 0, 0, 0, 0, null);
         openPq.Enqueue(firstNode, 0);
-        openHs.Add(firstNode);
+        openDic.Add((0, 0, -1, -1, -1, -1, -1, -1), 0);
 
-        var counter = 1;
+        var counter = 0;
         while (true)
         {
-            if (counter++ % 10000 == 0)
+            if (counter++ % 100000 == 0)
             {
-                Console.WriteLine($"{counter}: {openHs.Count}, {closedHs.Count}, {openHs.Select(x => x.Row).Max()}, {openHs.Select(x => x.Col).Max()}");
+                Console.WriteLine($"{counter}: {openDic.Count}, {closedDic.Count}");
             }
             
             var q = openPq.Dequeue();
-            openHs.Remove(q);
+            openDic.Remove((q.Row, q.Col,
+                q.Parent?.Row ?? -1, q.Parent?.Col ?? -1,
+                q.Parent?.Parent?.Row ?? -1, q.Parent?.Parent?.Col ?? -1,
+                q.Parent?.Parent?.Parent?.Row ?? -1, q.Parent?.Parent?.Parent?.Col ?? -1));
             
             var successors = GetSuccessors(q!);
             foreach (var suc in successors)
@@ -48,33 +54,39 @@ public class _17 {
                     return;
                 }
 
-                if (openHs.Any(x =>
-                        x.Row == suc.Row &&
-                        x.Col == suc.Col &&
-                        x.Parent?.Row == suc.Parent?.Row &&
-                        x.Parent?.Col == suc.Parent?.Col &&
-                        x.Parent?.Parent?.Row == suc.Parent?.Parent?.Row &&
-                        x.Parent?.Parent?.Col == suc.Parent?.Parent?.Col &&
-                        x.Parent?.Parent?.Parent?.Row == suc.Parent?.Parent?.Parent?.Row &&
-                        x.Parent?.Parent?.Parent?.Col == suc.Parent?.Parent?.Parent?.Col &&
-                        x.F < suc.F))
+                if (openDic.TryGetValue((suc.Row, suc.Col,
+                        suc.Parent?.Row ?? -1, suc.Parent?.Col ?? -1,
+                        suc.Parent?.Parent?.Row ?? -1, suc.Parent?.Parent?.Col ?? -1,
+                        suc.Parent?.Parent?.Parent?.Row ?? -1, suc.Parent?.Parent?.Parent?.Col ?? -1), out var value))
                 {
-                    continue;
+                    if (value < suc.F)
+                    {
+                        continue;
+                    }
                 }
                 
-                if (closedHs.Any(x =>
-                        x.r == suc.Row &&
-                        x.c == suc.Col &&
-                        x.f < suc.F))
+                if (closedDic.TryGetValue((suc.Row, suc.Col,
+                        suc.Parent?.Row ?? -1, suc.Parent?.Col ?? -1,
+                        suc.Parent?.Parent?.Row ?? -1, suc.Parent?.Parent?.Col ?? -1,
+                        suc.Parent?.Parent?.Parent?.Row ?? -1, suc.Parent?.Parent?.Parent?.Col ?? -1), out var valueClosed))
                 {
-                    continue;
+                    if (valueClosed < suc.F)
+                    {
+                        continue;
+                    }
                 }
 
                 openPq.Enqueue(suc, suc.F);
-                openHs.Add(suc);
+                openDic[(suc.Row, suc.Col,
+                    suc.Parent?.Row ?? -1, suc.Parent?.Col ?? -1,
+                    suc.Parent?.Parent?.Row ?? -1, suc.Parent?.Parent?.Col ?? -1,
+                    suc.Parent?.Parent?.Parent?.Row ?? -1, suc.Parent?.Parent?.Parent?.Col ?? -1)] = suc.F;
             }
-            
-            closedHs.Add((q.Row, q.Col, q.F));
+
+            closedDic[(q.Row, q.Col,
+                q.Parent?.Row ?? -1, q.Parent?.Col ?? -1,
+                q.Parent?.Parent?.Row ?? -1, q.Parent?.Parent?.Col ?? -1,
+                q.Parent?.Parent?.Parent?.Row ?? -1, q.Parent?.Parent?.Parent?.Col ?? -1)] = q.F;
         }
     }
 
@@ -132,8 +144,7 @@ public class _17 {
     
     private static int CalcH(Node node)
     {
-        return Math.Abs(node.Row - _map.Length - 1) +
-               Math.Abs(node.Col - _map[0].Length - 1);
+        return 0;
     }
 
     private static void Print(Node node)
