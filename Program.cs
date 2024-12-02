@@ -1,4 +1,4 @@
-﻿using adventofcode2022._2023;
+﻿using adventofcode2022._2024;
 
 namespace adventofcode2022
 {
@@ -18,7 +18,7 @@ namespace adventofcode2022
         {
             // _21.Run();
             
-            _17.Run();
+            _2.Run();
         }
     }
 }
