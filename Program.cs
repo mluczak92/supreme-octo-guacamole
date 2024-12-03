@@ -16,9 +16,9 @@ namespace adventofcode2022
 
         static void Main(string[] _)
         {
-            // _21.Run();
-            
-            _2.Run();
+            _3.Run2();
+            _3.Run2_2();
+            _3.Run2_3();
         }
     }
 }
