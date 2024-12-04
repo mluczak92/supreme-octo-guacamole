@@ -169,16 +169,13 @@ public static class _4
             for (var j = 0; j < data[i].Length; j++)
                 if (data[i][j] == 'X')
                     foreach (var d in directions)
-                    {
-                        var word = "X";
-                        if (Read(data, 4, (i, j), d, ref word) == "XMAS")
+                        if (Read(data, 4, (i, j), d, "X") == "XMAS")
                             counter++;
-                    }
 
         Console.WriteLine(counter);
     }
 
-    static string Read(char[][] data, int wordLen, (int x, int y) position, (int x, int y) direction, ref string word)
+    static string Read(char[][] data, int wordLen, (int x, int y) position, (int x, int y) direction, string word)
     {
         if (word.Length == wordLen)
             return word;
@@ -189,7 +186,7 @@ public static class _4
         try
         {
             word += data[position.x][position.y];
-            return Read(data, wordLen, position, direction, ref word);
+            return Read(data, wordLen, position, direction, word);
         }
         catch (IndexOutOfRangeException)
         {
@@ -205,11 +202,8 @@ public static class _4
             for (var j = 0; j < data[i].Length; j++)
                 if (data[i][j] == 'A') 
                 {
-                    var word1 = "";
-                    Read(data, 3, (i - 2, j - 2), (1, 1), ref word1);
-
-                    var word2 = "";
-                    Read(data, 3, (i + 2, j - 2), (-1, 1), ref word2);
+                    var word1 = Read(data, 3, (i - 2, j - 2), (1, 1), "");
+                    var word2 = Read(data, 3, (i + 2, j - 2), (-1, 1), "");
                     
                     if (word1 is "MAS" or "SAM" && word2 is "MAS" or "SAM")
                         counter++;
