@@ -1429,22 +1429,11 @@ public static class _5
         foreach (var u in updates)
         {
             for (var i = 0; i < u.Length; i++)
-            {
-                for (var j = 0; j < u.Length; j++)
+                for (var j = i + 1; j < u.Length; j++)
                 {
-                    if (i < j)
-                    {
-                        if (lowerDict.TryGetValue(u[i], out var lows) && lows.Contains(u[j])) goto NEXT_UPDATE;
-                        if (greaterDict.TryGetValue(u[j], out var ups) && ups.Contains(u[i])) goto NEXT_UPDATE;
-                    }
-                    
-                    if (i > j)
-                    {
-                        if (lowerDict.TryGetValue(u[j], out var lows) && lows.Contains(u[i])) goto NEXT_UPDATE;
-                        if (greaterDict.TryGetValue(u[i], out var ups) && ups.Contains(u[j])) goto NEXT_UPDATE;
-                    }
+                    if (lowerDict.TryGetValue(u[i], out var lows) && lows.Contains(u[j])) goto NEXT_UPDATE;
+                    if (greaterDict.TryGetValue(u[j], out var ups) && ups.Contains(u[i])) goto NEXT_UPDATE;
                 }
-            }
 
             counter += u[u.Length / 2];
             NEXT_UPDATE: ;
@@ -1477,30 +1466,15 @@ public static class _5
         {
             bool swapped = false;
             for (var i = 0; i < u.Length; i++)
-            {
-                for (var j = 0; j < u.Length; j++)
+                for (var j = i + 1; j < u.Length; j++)
                 {
-                    if (i < j)
-                    {
                         if ((lowerDict.TryGetValue(u[i], out var lows) && lows.Contains(u[j])) ||
                             (greaterDict.TryGetValue(u[j], out var ups) && ups.Contains(u[i])))
                         {
                             (u[i], u[j]) = (u[j], u[i]);
                             swapped = true;
                         }
-                    }
-                    
-                    if (i > j)
-                    {
-                        if ((lowerDict.TryGetValue(u[j], out var lows) && lows.Contains(u[i])) ||
-                            (greaterDict.TryGetValue(u[i], out var ups) && ups.Contains(u[j])))
-                        {
-                            (u[i], u[j]) = (u[j], u[i]);
-                            swapped = true;
-                        }
-                    }
                 }
-            }
 
             if (swapped)
                 counter += u[u.Length / 2];
