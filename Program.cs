@@ -1,4 +1,4 @@
-﻿using adventofcode2022._2024._6;
+﻿using adventofcode2022._2024._7;
 
 namespace adventofcode2022
 {
@@ -6,8 +6,7 @@ namespace adventofcode2022
     {
         static void Main(string[] _)
         {
-            _6.Run_1();
-            _6.Run_2();
+            _7.Run();
         }
     }
 }
